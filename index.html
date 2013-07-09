@@ -11,9 +11,9 @@
 
 			$.format.date.defaultLongDateFormat = "yyyy-mm-dd, HH:mm:ss";
 	
-			var $socketDiv = $("#socketDiv");
-			var $registerButton = $socketDiv.children("#registerButton");
-			var $nodeNumber = $socketDiv.children("#nodeNumber");
+			var $socketDiv = $(".socketDiv");
+			var $registerButton = $socketDiv.children("button");
+			var $nodeNumber = $socketDiv.children("input");
 			$registerButton.click(function() { 
 
 				connect( $nodeNumber.val(), function( msg ) {
@@ -21,7 +21,7 @@
 					console.log( msg );
 				
 				} );
-
+				
 			});
 
 			$nodeNumber.bind( "keyup blur", function() {
@@ -100,11 +100,6 @@
 			margin-right: 5px;
 		}
 
-		.socketDiv #registerButton {
-
-			float: right;
-		}
-
 		table {
 			font-family: verdana,arial,sans-serif;
 			font-size:11px;
@@ -131,10 +126,9 @@
 </style>
 </head>
 <body>
-	<div id="socketDiv" class="socketDiv">
-		<input id="nodeNumber" type="text" placeholder="node Number"/>
-		<button id="registerButton" disabled="true">register</button>
-		<p>
+	<div class="socketDiv">
+		<input type="text" placeholder="node Number"/>
+		<button disabled="true">register</button>
 	</div>		
 	<div id="info"></div>
 	<div id="data"></div>
