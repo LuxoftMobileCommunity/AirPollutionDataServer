@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Server test</title>
+	<script src="http://localhost:1337/socket.io/socket.io.js"></script>
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src="jquery.dateFormat-1.0.js"></script>
+	<script type="text/javascript">
+
+		$(document).ready( function() {
+
+			$.format.date.defaultLongDateFormat = "yyyy-mm-dd, HH:mm:ss";
+	
+			var $socketDiv = $("#socketDiv");
+			var $registerButton = $socketDiv.children("#registerButton");
+			var $nodeNumber = $socketDiv.children("#nodeNumber");
+			$registerButton.click(function() { 
+
+				connect( $nodeNumber.val(), function( msg ) {
+
+					console.log( msg );
+				
+				} );
+
+			});
+
+			$nodeNumber.bind( "keyup blur", function() {
+
+				$registerButton.prop( "disabled", $nodeNumber.val() == '');
+			})
+
+		
+		})
+
+		function connect( nodeNumber, traceFnc ) {
+
+			var socket = io.connect( "http://localhost:1337" );
+			if( socket.socket && socket.socket.connected ) {
+
+				register( socket, nodeNumber, traceFnc );
+			}
+			else {
+				socket.on( "connect", function() {
+
+					register( socket, nodeNumber, traceFnc );
+				})
+				socket.on( "nodeData", function( nodeData ) {
+
+					traceFnc("recieved data for node : " + nodeData.nodeNumber );
+					applyData( nodeData.nodeData, $("#data") );
+					$("#info").html( $.format.date( nodeData.date, "yyyy-MM-dd, HH:mm:ss") );
+				})
+			}
+			
+
+		}
+
+		function register( socket, nodeNumber, traceFnc ) {
+
+			traceFnc( "socket connecting to node : " + nodeNumber )
+			socket.emit( "register", nodeNumber );
+		}
+
+
+		function applyData( nodeData, div ) {
+
+			div.html("");
+			var table = "<table><tr><th>nazwa skladnika</th>";
+			for( var i=0; i<24; i++ ) {
+
+				table += "<th>" + i + "</th>";
+			}
+
+			table += "</tr>";
+
+
+			$.each( nodeData, function( index, data ) {
+				var row = "<tr>";
+				row += "<td>" + data.param + "</td>";
+				$.each( data.hours, function( index, data )  {
+
+					row += "<td>" + data.value + "</td>";
+				})
+				row += "</tr>";
+				table += row;
+			})
+			table += "</table>";
+			div.html( table );
+
+		}
+		
+		
+	</script>
+	<style type="text/css">
+
+		.socketDiv {
+
+			border: 1px black solid;
+			padding: 10px;
+			margin-right: 5px;
+		}
+
+		.socketDiv #registerButton {
+
+			float: right;
+		}
+
+		table {
+			font-family: verdana,arial,sans-serif;
+			font-size:11px;
+			color:#333333;
+			border-width: 1px;
+			border-color: #666666;
+			border-collapse: collapse;
+		}
+		table th {
+			border-width: 1px;
+			padding: 8px;
+			border-style: solid;
+			border-color: #666666;
+			background-color: #dedede;
+		}
+		table td {
+			border-width: 1px;
+			padding: 8px;
+			border-style: solid;
+			border-color: #666666;
+			background-color: #ffffff;
+			text-align: center;
+		}
+</style>
+</head>
+<body>
+	<div id="socketDiv" class="socketDiv">
+		<input id="nodeNumber" type="text" placeholder="node Number"/>
+		<button id="registerButton" disabled="true">register</button>
+		<p>
+	</div>		
+	<div id="info"></div>
+	<div id="data"></div>
+</div>
+</body>
+</html>
