@@ -58,7 +58,7 @@ function createRowData( row )
 	{
 		date = new Date();
 		date.setHours(i+1);
-		rowData.data[i] = { date:date, value:cells.eq(i+3).text()}
+		rowData.data[i] = { date:date, value:cells.eq(i+3).text().trim()}
 	}
 	return rowData;
 }
