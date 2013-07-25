@@ -1,6 +1,6 @@
 var getNodeData = require( "./parser" );
 var Q = require( "q" );
-io = require( "socket.io").listen( require( "http" ).createServer( null ).listen( 1337, 'localhost') );
+io = require( "socket.io").listen( require( "http" ).createServer( null ).listen( 1337, '172.30.218.52') );
 
 
 setInterval( function() {
@@ -60,7 +60,7 @@ function getData( nodeNumber ) {
 	console.log( "getting data for node : " + nodeNumber );
 	getNodeData( nodeNumber ).then( function( nodeData ) {
 
-		socket.emit( "nodeData", createNodeData( nodeNumber, nodeData ) );
+		socket.emit( "nodeData", nodeData );
 		console.log( "data ready for node : " + nodeNumber );
 
 	}, function( fail ) {
@@ -76,7 +76,7 @@ function pushData( nodeNumber ) {
 	console.log( "prepare to push data to node : " + nodeNumber );
 	getNodeData( nodeNumber ).then( function( nodeData ) {
 
-		io.sockets.in(nodeNumber).emit( "nodeData", createNodeData( nodeNumber, nodeData) );
+		io.sockets.in(nodeNumber).emit( "nodeData", nodeData );
 		console.log( "data pushed to node : " + nodeNumber );
 
 	}, function( fail ) {
@@ -88,7 +88,7 @@ function pushData( nodeNumber ) {
 
 function createNodeData( nodeNumber, nodeData ) {
 
-	return { nodeNumber: nodeNumber, date:new Date(), nodeData:nodeData }
+	return { nodeNumber: nodeNumber, nodeData:nodeData }
 
 
 }

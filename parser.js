@@ -2,8 +2,8 @@ var request = require("request");
 var jsdom = require("jsdom");
 var Q = require("q");
 
-var url = "http://monitoring.krakow.pios.gov.pl/iseo/aktualne_stacja.php?stacja=";
 
+var url = "http://monitoring.krakow.pios.gov.pl/iseo/aktualne_stacja.php?stacja=";
 
 module.exports = parseNodeData;
 
@@ -30,13 +30,15 @@ function parseNodeData( nodeNumber )
 			}
 
 			$  = window.jQuery;
+			var nodeName = $("body center h2");
 			var rows = $("table").eq(0).children("tr").slice(2);
 			var arr = [];
 			$(rows).each( function()
 			{
 				arr.push( createRowData( this ) );
 			})
-			defer.resolve( arr );
+			var data = JSON.stringify( arr );
+			defer.resolve( data );
 		})	
 	})
 	return defer.promise;
@@ -50,10 +52,13 @@ function createRowData( row )
 	var cells = $($(row).children( "td" ));
 	rowData.param = cells.eq(0).text();
 	rowData.unit = cells.eq(1).text();
-	rowData.hours = [];
+	rowData.data = [];
+	var date;
 	for( var i = 0; i<24; i ++ )
 	{
-		rowData.hours[i] = { hour:i+1, value:cells.eq(i+3).text()}
+		date = new Date();
+		date.setHours(i+1);
+		rowData.data[i] = { date:date, value:cells.eq(i+3).text()}
 	}
 	return rowData;
 }

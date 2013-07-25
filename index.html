@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="utf-8"></meta>
 	<title>Server test</title>
 	<script src="http://localhost:1337/socket.io/socket.io.js"></script>
 	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
@@ -46,9 +47,9 @@
 				})
 				socket.on( "nodeData", function( nodeData ) {
 
-					traceFnc("recieved data for node : " + nodeData.nodeNumber );
-					applyData( nodeData.nodeData, $("#data") );
-					$("#info").html( $.format.date( nodeData.date, "yyyy-MM-dd, HH:mm:ss") );
+					traceFnc("recieved data for node : " + nodeData.nodeName );
+					applyData( nodeData, $("#data") );
+					$("#info").html( nodeData.nodeName + ", " + $.format.date( new Date(), "HH:mm:ss") );
 				})
 			}
 			
@@ -66,7 +67,7 @@
 
 			div.html("");
 			var table = "<table><tr><th>nazwa skladnika</th>";
-			for( var i=0; i<24; i++ ) {
+			for( var i=1; i<25; i++ ) {
 
 				table += "<th>" + i + "</th>";
 			}
@@ -74,7 +75,7 @@
 			table += "</tr>";
 
 
-			$.each( nodeData, function( index, data ) {
+			$.each( nodeData.nodeData, function( index, data ) {
 				var row = "<tr>";
 				row += "<td>" + data.param + "</td>";
 				$.each( data.hours, function( index, data )  {
