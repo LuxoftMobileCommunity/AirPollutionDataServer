@@ -32,13 +32,13 @@ function parseNodeData( nodeNumber )
 			$  = window.jQuery;
 			var nodeName = $("body center h2");
 			var rows = $("table").eq(0).children("tr").slice(2);
+			var json = {}
 			var arr = [];
 			$(rows).each( function()
 			{
 				arr.push( createRowData( this ) );
 			})
-			var data = JSON.stringify( arr );
-			defer.resolve( data );
+			defer.resolve( JSON.stringify( { data:arr } ) );
 		})	
 	})
 	return defer.promise;
@@ -50,7 +50,7 @@ function createRowData( row )
 
 	var rowData = {};
 	var cells = $($(row).children( "td" ));
-	rowData.param = cells.eq(0).text();
+	rowData.medium = cells.eq(0).text();
 	rowData.unit = cells.eq(1).text();
 	rowData.data = [];
 	var date;
